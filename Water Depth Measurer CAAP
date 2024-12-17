@@ -1,0 +1,77 @@
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <ctime>
+#include <iomanip>
+
+using namespace std;
+
+// Function to simulate sensor readings (water depth in meters)
+double simulateDepth() {
+    return (rand() % 1000) / 100.0; // Simulate between 0.00 and 10.00 meters
+}
+
+// Function to log data into a file
+void logData(double depth) {
+    ofstream logFile("water_depth_log.txt", ios::app);
+    if (logFile.is_open()) {
+        time_t now = time(0);
+        char* dt = ctime(&now);
+        logFile << "Timestamp: " << dt;
+        logFile << "Water Depth: " << fixed << setprecision(2) << depth << " meters\n";
+        logFile << "--------------------------------------------\n";
+        logFile.close();
+    } else {
+        cout << "Error: Unable to open log file.\n";
+    }
+}
+
+// Function to display depth readings
+void displayReadings(int numReadings) {
+    cout << "\n--- Water Depth Readings (in meters) ---\n";
+    cout << "----------------------------------------\n";
+    for (int i = 0; i < numReadings; ++i) {
+        double depth = simulateDepth();
+        cout << "Reading " << i + 1 << ": " << fixed << setprecision(2) << depth << " meters\n";
+        logData(depth); // Log the reading to the file
+    }
+    cout << "----------------------------------------\n";
+    cout << "Data successfully logged to 'water_depth_log.txt'\n";
+}
+
+int main() {
+    srand(time(0)); // Seed for random number generation
+
+    int choice;
+    int numReadings;
+
+    cout << "=============================================\n";
+    cout << "        WATER DEPTH MEASURER SYSTEM           \n";
+    cout << "=============================================\n";
+
+    while (true) {
+        cout << "\nOptions:\n";
+        cout << "1. Measure Water Depth\n";
+        cout << "2. Exit Program\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "How many readings would you like to take? ";
+            cin >> numReadings;
+
+            if (numReadings > 0) {
+                displayReadings(numReadings);
+            } else {
+                cout << "Error: Number of readings must be greater than 0.\n";
+            }
+        } else if (choice == 2) {
+            cout << "Exiting program. Thank you!\n";
+            break;
+        } else {
+            cout << "Invalid choice. Please try again.\n";
+        }
+    }
+
+    return 0;
+}
